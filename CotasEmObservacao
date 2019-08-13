@@ -1,0 +1,78 @@
+Sub CotasEmObservacao()
+
+Dim GrupoECota As Double
+
+Dim ArrayGrupoECota() As Double
+ReDim ArrayGrupoECota(1 To 1) As Double '
+
+Dim ArrayDePesquisa() As Double
+ReDim ArrayDePesquisa(1 To 1) As Double
+
+Dim AlcanceDaBusca As Integer
+AlcanceDaBusca = 30 ' Número de dossiês a ser buscado
+
+Dim grupoPesquisa, cotaPesquisa, observacaoPesquisa, offSetLinha, i As Integer
+Dim ulArraydePesquisa As Long
+
+'Inicializa Array de Pesquisa
+
+Set Config = Worksheets("Testes")
+grupoPesquisa = 1
+cotaPesquisa = 2
+observacaoPesquisa = 3
+offSetLinha = 2
+ulArraydePesquisa = Config.Cells(Rows.Count, 2).End(xlUp).Row
+i = offSetLinha
+
+Do While i <= ulArraydePesquisa
+    GrupoECota = Val(Config.Cells(i, grupoPesquisa)) & ValidadorDeCota(Val(Config.Cells(i, cotaPesquisa)))
+    ArrayDePesquisa(UBound(ArrayDePesquisa)) = GrupoECota
+    ReDim Preserve ArrayDePesquisa(1 To UBound(ArrayDePesquisa) + 1) As Double
+    i = i + 1
+Loop
+ReDim Preserve ArrayDePesquisa(1 To UBound(ArrayDePesquisa) - 1) As Double
+
+'Inicializa Array com Grupos e Cotas a serem pesquisados
+
+Dim grupo, Cota As Integer
+Dim ul As Long
+
+grupo = 5
+Cota = 6
+ul = Cells(Rows.Count, grupo).End(xlUp).Row
+
+i = ul - AlcanceDaBusca
+
+If i <= 0 Then i = 8
+
+Do While i <= ul
+    GrupoECota = Val(Cells(i, grupo)) & ValidadorDeCota(Val(Cells(i, Cota)))
+    ArrayGrupoECota(UBound(ArrayGrupoECota)) = GrupoECota
+    ReDim Preserve ArrayGrupoECota(1 To UBound(ArrayGrupoECota) + 1) As Double
+    i = i + 1
+Loop
+
+ReDim Preserve ArrayGrupoECota(1 To UBound(ArrayGrupoECota) - 1) As Double
+
+'Define início e fim de ambos Arrays
+InicioDoArray = LBound(ArrayGrupoECota): FinalDoArray = UBound(ArrayGrupoECota)
+InicioArrayDePesquisa = LBound(ArrayDePesquisa): FinalArrayDePesquisa = UBound(ArrayDePesquisa)
+
+'Pesquisa e comparação entre os Arrays
+Do While InicioArrayDePesquisa <= FinalArrayDePesquisa
+        Do While InicioDoArray <= FinalDoArray
+        
+        linha = (ul - AlcanceDaBusca - 1) + (InicioDoArray)
+        linhaDePesquisa = (offSetLinha - 1) + InicioArrayDePesquisa
+        
+            If ArrayDePesquisa(InicioArrayDePesquisa) = ArrayGrupoECota(InicioDoArray) Then MsgBox "Cota em observação identificada! Atenção à planilha!" _
+            & vbNewLine & "Grupo: " & Cells(linha, grupo) & " - Cota: " & Cells(linha, Cota) & " - Linha: " & linha & vbNewLine & _
+            "Observação: " & Config.Cells(linhaDePesquisa, observacaoPesquisa)
+            
+            InicioDoArray = InicioDoArray + 1
+        Loop
+InicioDoArray = LBound(ArrayGrupoECota)
+InicioArrayDePesquisa = InicioArrayDePesquisa + 1
+Loop
+
+End Sub
