@@ -76,3 +76,29 @@ InicioArrayDePesquisa = InicioArrayDePesquisa + 1
 Loop
 
 End Sub
+
+Function ValidadorDeCota(Cota)
+
+Tamanho = Len(Cota)
+Select Case Tamanho
+    Case Is <= 3
+        ValidadorDeCota = Cota
+    Case Is = 4
+        If Cota = 1000 Then ValidadorDeCota = Cota
+        If Cota > 1000 Then
+           Do While Cota > 1000
+               ultimoNumero = Right(Cota, 1)
+               If ultimoNumero = 0 Then Cota = Cota / 10
+           Loop
+           ValidadorDeCota = Cota
+           End If
+    Case Is > 4
+        If Cota > 1000 Then
+            Do While Cota > 1000
+                ultimoNumero = Right(Cota, 1)
+                If ultimoNumero = 0 Then Cota = Cota / 10
+            Loop
+            ValidadorDeCota = Cota
+        End If
+End Select
+End Function
